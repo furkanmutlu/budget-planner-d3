@@ -3,11 +3,48 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <title>D3 Budget Planner</title>
+    <link rel="stylesheet" href="/index.css">
 </head>
-<body>
+<body class="indigo">
+    <header class="indigo darken-1 section">
+        <h2 class="center white-text">D3 Budget Planning</h2>
+        <p class="flow-text grey-text center text-lighten-2">Simple monthly money tracker...</p>
+    </header>
+
+    <div class="container section">
+        <div class="row">
+            <div class="col s12 m6">
+                <form class="card z-depth-0">
+                    <div class="card-content">
+                        <span class="card-title indigo-text">Add Item</span>
+                        <div class="input-field">
+                            <input type="text" id="name">
+                            <label for="name">Item Name</label>
+                        </div>
+                        <div class="input-field">
+                            <input type="text" id="cost">
+                            <label for="cost">Item Cost</label>
+                        </div>
+                        <div class="input-field center">
+                            <button class="btn-large pink white-text">Add Item</button>
+                        </div>
+                        <div class="input-field center">
+                            <p class="red-text" id="error">test</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col s12 m5 push-m1">
+                <div class="canvas"></div>
+            </div>
+        </div>
+    </div>
+
     
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="/index.js"></script>
     <script src="/graph.js"></script>
 </body>
