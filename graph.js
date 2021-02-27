@@ -27,7 +27,14 @@ const update = (data) => {
 
     // Join enhanced (pie) data to path elements
     const paths = graph.selectAll('path')
-        .data(pie(data));
+    .data(pie(data));
+    
+
+    // Handle the exit selection
+    paths.exit().remove();
+
+    // Handle the current DOM path updates
+    paths.attr('d', arcPath);
     
     paths.enter()
         .append('path')
@@ -35,7 +42,7 @@ const update = (data) => {
             .attr('d', arcPath)
             .attr('stroke', '#fff')
             .attr('stroke-width', 3)
-            .attr('fill', d => color(d.data.name))
+            .attr('fill', d => color(d.data.name));
 }
 
 // Data Array and Firestore
