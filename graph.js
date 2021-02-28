@@ -19,16 +19,29 @@ const arcPath = d3.arc()
 
 const color = d3.scaleOrdinal(d3['schemeSet3']);
 
+// Legend setup
+const legendGroup = svg.append('g')
+    .attr('transform', `translate(${dims.width + 40}, 10)`);
+
+const legend = d3.legendColor()
+    .shape('circle')
+    .shapePadding(10)
+    .scale(color);
+
 // Update function
 const update = (data) => {
     // update color scale domain
     color.domain(data.map(d => d.name));
 
+    // Update and call legend
+    legendGroup.call(legend);
+    legendGroup.selectAll('text')
+        .attr('fill', 'white');
+
     // Join enhanced (pie) data to path elements
     const paths = graph.selectAll('path')
     .data(pie(data));
     
-
     // Handle the exit selection
     paths.exit()
         .transition().duration(750)
@@ -36,7 +49,9 @@ const update = (data) => {
     .remove();
 
     // Handle the current DOM path updates
-    paths.attr('d', arcPath);
+    paths.attr('d', arcPath)
+        .transition().duration(750)
+        .attrTween('d', arcTweenUpdate);
     
     paths.enter()
         .append('path')
@@ -44,6 +59,7 @@ const update = (data) => {
             .attr('stroke', '#fff')
             .attr('stroke-width', 3)
             .attr('fill', d => color(d.data.name))
+            .each(function(d) { this._current = d })
             .transition().duration(750)
                 .attrTween('d', arcTweenEnter);
 }
@@ -84,10 +100,21 @@ const arcTweenEnter = (d) => {
 };
 
 const arcTweenExit = (d) => {
-    let i = d3.interpolate(d.startAngle, d.endAngle);
+    const i = d3.interpolate(d.startAngle, d.endAngle);
 
     return function(t) {
         d.startAngle = i(t);
         return arcPath(d);
     };
 };
+
+function arcTweenUpdate(d) {
+    const i = d3.interpolate(this._current, d);
+
+    // Update the current prop with new updated data
+    this._current = d;
+
+    return function(t) {
+        return arcPath(i(t));
+    }
+}
