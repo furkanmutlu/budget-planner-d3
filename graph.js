@@ -21,7 +21,6 @@ const color = d3.scaleOrdinal(d3['schemeSet3']);
 
 // Update function
 const update = (data) => {
-
     // update color scale domain
     color.domain(data.map(d => d.name));
 
@@ -31,7 +30,10 @@ const update = (data) => {
     
 
     // Handle the exit selection
-    paths.exit().remove();
+    paths.exit()
+        .transition().duration(750)
+        .attrTween('d', arcTweenExit)    
+    .remove();
 
     // Handle the current DOM path updates
     paths.attr('d', arcPath);
@@ -39,10 +41,11 @@ const update = (data) => {
     paths.enter()
         .append('path')
             .attr('class', 'arc')
-            .attr('d', arcPath)
             .attr('stroke', '#fff')
             .attr('stroke-width', 3)
-            .attr('fill', d => color(d.data.name));
+            .attr('fill', d => color(d.data.name))
+            .transition().duration(750)
+                .attrTween('d', arcTweenEnter);
 }
 
 // Data Array and Firestore
@@ -70,3 +73,21 @@ db.collection('expenses').onSnapshot(res => {
 
     update(data);
 });
+
+const arcTweenEnter = (d) => {
+    let i = d3.interpolate(d.endAngle, d.startAngle);
+
+    return function(t) {
+        d.startAngle = i(t);
+        return arcPath(d);
+    };
+};
+
+const arcTweenExit = (d) => {
+    let i = d3.interpolate(d.startAngle, d.endAngle);
+
+    return function(t) {
+        d.startAngle = i(t);
+        return arcPath(d);
+    };
+};
